@@ -5,8 +5,24 @@ using WebApplication8.Data;
 
 namespace WebApplication8;
 
+public interface IDbUserSecurityStampStore<TUser> : IUserSecurityStampStore<TUser>
+    where TUser : class, ICustomIdentityUser
+{
+    Task IUserSecurityStampStore<TUser>.SetSecurityStampAsync(TUser user, String stamp, CancellationToken cancellationToken)
+    {
+        user.SecurityStamp = stamp;
 
-public class CustomUserStore<TUser, TContext, TKey> : IUserStore<TUser>, IUserEmailStore<TUser>, IUserPasswordStore<TUser>, IUserSecurityStampStore<TUser>
+        return Task.CompletedTask;
+    }
+
+    Task<String> IUserSecurityStampStore<TUser>.GetSecurityStampAsync(TUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.SecurityStamp);
+    }
+}
+
+public class CustomUserStore<TUser, TContext, TKey>
+    : IUserStore<TUser>, IUserEmailStore<TUser>, IUserPasswordStore<TUser>, IDbUserSecurityStampStore<TUser>, IQueryableUserStore<TUser>
     where TUser : class, ICustomIdentityUser<TKey>
     where TContext : DbContext, IWithUsersDbContext<TUser>
     where TKey : IEquatable<TKey>
@@ -237,6 +253,8 @@ public class CustomUserStore<TUser, TContext, TKey> : IUserStore<TUser>, IUserEm
         _disposed = true;
     }
 
+    // IUserEmailStore
+
     public Task SetEmailAsync(TUser user, String email, CancellationToken cancellationToken)
     {
         user.Email = email;
@@ -295,19 +313,5 @@ public class CustomUserStore<TUser, TContext, TKey> : IUserStore<TUser>, IUserEm
     public Task<Boolean> HasPasswordAsync(TUser user, CancellationToken cancellationToken)
     {
         return Task.FromResult(user.PasswordHash != null);
-    }
-
-    // IUserSecurityStampStore
-
-    public Task SetSecurityStampAsync(TUser user, String stamp, CancellationToken cancellationToken)
-    {
-        user.SecurityStamp = stamp;
-
-        return Task.CompletedTask;
-    }
-
-    public Task<String> GetSecurityStampAsync(TUser user, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(user.SecurityStamp);
     }
 }
