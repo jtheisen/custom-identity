@@ -19,10 +19,7 @@ services.AddDatabaseDeveloperPageExceptionFilter();
 services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true);
 
 services.AddScoped<ILookupNormalizer, TrivialLookupNormalizer>();
-
-
-
-services.AddScoped<IUserStore<User>, LeanEfUserStore<User, ApplicationDbContext, Guid>>();
+services.AddScoped<IUserStore<User>, CustomUserStore>();
 
 services.AddRazorPages();
 

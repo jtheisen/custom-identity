@@ -102,7 +102,8 @@ namespace WebApplication8.Data
 
             modelBuilder.Entity<UserPrivateSection>()
                 .HasOne(p => p.User)
-                .WithOne(u => u.PrivateSection);
+                .WithOne(u => u.PrivateSection)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public IQueryable<AppUser> GetUsers() => Users.Include(u => u.PrivateSection);

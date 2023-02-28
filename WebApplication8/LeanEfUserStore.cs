@@ -5,127 +5,6 @@ using WebApplication8.Data;
 
 namespace WebApplication8;
 
-public interface ILeanEfUserSecurityStampStore<TUser> : IUserSecurityStampStore<TUser>
-    where TUser : class, ILeanEfIdentityUser
-{
-    Task IUserSecurityStampStore<TUser>.SetSecurityStampAsync(TUser user, String stamp, CancellationToken cancellationToken)
-    {
-        user.SecurityStamp = stamp;
-
-        return Task.CompletedTask;
-    }
-
-    Task<String> IUserSecurityStampStore<TUser>.GetSecurityStampAsync(TUser user, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(user.SecurityStamp);
-    }
-}
-
-public interface ILeanEfUserEmailStore<TUser, TKey> : IUserEmailStore<TUser>, ILeanEfUserStore<TUser, TKey>
-    where TUser : class, ILeanEfIdentityUser
-{
-    Task IUserEmailStore<TUser>.SetEmailAsync(TUser user, String email, CancellationToken cancellationToken)
-    {
-        user.Email = email;
-
-        return Task.CompletedTask;
-    }
-
-    Task<String> IUserEmailStore<TUser>.GetEmailAsync(TUser user, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(user.Email);
-    }
-
-    Task<Boolean> IUserEmailStore<TUser>.GetEmailConfirmedAsync(TUser user, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(user.IsEmailConfirmed);
-    }
-
-    Task IUserEmailStore<TUser>.SetEmailConfirmedAsync(TUser user, Boolean confirmed, CancellationToken cancellationToken)
-    {
-        user.IsEmailConfirmed = confirmed;
-
-        return Task.CompletedTask;
-    }
-
-    Task<TUser> IUserEmailStore<TUser>.FindByEmailAsync(String normalizedEmail, CancellationToken cancellationToken)
-    {
-        return Context.GetUsersByEmail(normalizedEmail).FirstOrDefaultAsync(cancellationToken);
-    }
-
-    Task<String> IUserEmailStore<TUser>.GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(user.NormalizedEmail);
-    }
-
-    Task IUserEmailStore<TUser>.SetNormalizedEmailAsync(TUser user, String normalizedEmail, CancellationToken cancellationToken)
-    {
-        user.NormalizedEmail = normalizedEmail;
-
-        return Task.CompletedTask;
-    }
-}
-
-public interface ILeanEfUserPasswordStore<TUser> : IUserPasswordStore<TUser>
-    where TUser : class, ILeanEfIdentityUser
-{
-    Task IUserPasswordStore<TUser>.SetPasswordHashAsync(TUser user, String passwordHash, CancellationToken cancellationToken)
-    {
-        user.PasswordHash = passwordHash;
-
-        return Task.CompletedTask;
-    }
-
-    Task<String> IUserPasswordStore<TUser>.GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(user.PasswordHash);
-    }
-
-    Task<Boolean> IUserPasswordStore<TUser>.HasPasswordAsync(TUser user, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(user.PasswordHash != null);
-    }
-}
-
-public interface ILeanEfQueryableUserStore<TUser, TKey> : IQueryableUserStore<TUser>, ILeanEfUserStore<TUser, TKey>
-    where TUser : class, ILeanEfIdentityUser
-{
-    IQueryable<TUser> IQueryableUserStore<TUser>.Users => Context.GetUsers();
-}
-
-public class CustomUserStore : LeanEfStandardWithSecurityStampUserStore<User, ApplicationDbContext, Guid>
-{
-    public CustomUserStore(ApplicationDbContext context, IdentityErrorDescriber describer) : base(context, describer) { }
-}
-
-public interface ILeanEfUserStore<TUser, TKey>
-{
-    IWithUsersDbContext<TUser, TKey> Context { get; }
-}
-
-public class LeanEfStandardUserStore<TUser, TContext, TKey> : LeanEfUserStore<TUser, TContext, TKey>,
-    ILeanEfUserEmailStore<TUser, TKey>,
-    ILeanEfUserPasswordStore<TUser>,
-    ILeanEfQueryableUserStore<TUser, TKey>
-    where TUser : class, ILeanEfIdentityUser<TKey>
-    where TContext : DbContext, IWithUsersDbContext<TUser, TKey>
-    where TKey : IEquatable<TKey>
-{
-    public LeanEfStandardUserStore(TContext context, IdentityErrorDescriber describer) : base(context, describer) { }
-}
-
-public class LeanEfStandardWithSecurityStampUserStore<TUser, TContext, TKey> : LeanEfUserStore<TUser, TContext, TKey>,
-    ILeanEfUserEmailStore<TUser, TKey>,
-    ILeanEfUserPasswordStore<TUser>,
-    ILeanEfQueryableUserStore<TUser, TKey>,
-    ILeanEfUserSecurityStampStore<TUser>
-    where TUser : class, ILeanEfIdentityUser<TKey>
-    where TContext : DbContext, IWithUsersDbContext<TUser, TKey>
-    where TKey : IEquatable<TKey>
-{
-    public LeanEfStandardWithSecurityStampUserStore(TContext context, IdentityErrorDescriber describer) : base(context, describer) { }
-}
-
 public class LeanEfUserStore<TUser, TContext, TKey> : IUserStore<TUser>, ILeanEfUserStore<TUser, TKey>
     where TUser : class, ILeanEfIdentityUser<TKey>
     where TContext : DbContext, IWithUsersDbContext<TUser, TKey>
@@ -361,6 +240,122 @@ public class LeanEfUserStore<TUser, TContext, TKey> : IUserStore<TUser>, ILeanEf
     }
 
     IWithUsersDbContext<TUser, TKey> ILeanEfUserStore<TUser, TKey>.Context => Context;
+}
+
+public interface ILeanEfUserSecurityStampStore<TUser> : IUserSecurityStampStore<TUser>
+    where TUser : class, ILeanEfIdentityUser
+{
+    Task IUserSecurityStampStore<TUser>.SetSecurityStampAsync(TUser user, String stamp, CancellationToken cancellationToken)
+    {
+        user.SecurityStamp = stamp;
+
+        return Task.CompletedTask;
+    }
+
+    Task<String> IUserSecurityStampStore<TUser>.GetSecurityStampAsync(TUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.SecurityStamp);
+    }
+}
+
+public interface ILeanEfUserEmailStore<TUser, TKey> : IUserEmailStore<TUser>, ILeanEfUserStore<TUser, TKey>
+    where TUser : class, ILeanEfIdentityUser
+{
+    Task IUserEmailStore<TUser>.SetEmailAsync(TUser user, String email, CancellationToken cancellationToken)
+    {
+        user.Email = email;
+
+        return Task.CompletedTask;
+    }
+
+    Task<String> IUserEmailStore<TUser>.GetEmailAsync(TUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.Email);
+    }
+
+    Task<Boolean> IUserEmailStore<TUser>.GetEmailConfirmedAsync(TUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.IsEmailConfirmed);
+    }
+
+    Task IUserEmailStore<TUser>.SetEmailConfirmedAsync(TUser user, Boolean confirmed, CancellationToken cancellationToken)
+    {
+        user.IsEmailConfirmed = confirmed;
+
+        return Task.CompletedTask;
+    }
+
+    Task<TUser> IUserEmailStore<TUser>.FindByEmailAsync(String normalizedEmail, CancellationToken cancellationToken)
+    {
+        return Context.GetUsersByEmail(normalizedEmail).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    Task<String> IUserEmailStore<TUser>.GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.NormalizedEmail);
+    }
+
+    Task IUserEmailStore<TUser>.SetNormalizedEmailAsync(TUser user, String normalizedEmail, CancellationToken cancellationToken)
+    {
+        user.NormalizedEmail = normalizedEmail;
+
+        return Task.CompletedTask;
+    }
+}
+
+public interface ILeanEfUserPasswordStore<TUser> : IUserPasswordStore<TUser>
+    where TUser : class, ILeanEfIdentityUser
+{
+    Task IUserPasswordStore<TUser>.SetPasswordHashAsync(TUser user, String passwordHash, CancellationToken cancellationToken)
+    {
+        user.PasswordHash = passwordHash;
+
+        return Task.CompletedTask;
+    }
+
+    Task<String> IUserPasswordStore<TUser>.GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.PasswordHash);
+    }
+
+    Task<Boolean> IUserPasswordStore<TUser>.HasPasswordAsync(TUser user, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(user.PasswordHash != null);
+    }
+}
+
+public interface ILeanEfQueryableUserStore<TUser, TKey> : IQueryableUserStore<TUser>, ILeanEfUserStore<TUser, TKey>
+    where TUser : class, ILeanEfIdentityUser
+{
+    IQueryable<TUser> IQueryableUserStore<TUser>.Users => Context.GetUsers();
+}
+
+public interface ILeanEfUserStore<TUser, TKey>
+{
+    IWithUsersDbContext<TUser, TKey> Context { get; }
+}
+
+public class LeanEfStandardUserStore<TUser, TContext, TKey> : LeanEfUserStore<TUser, TContext, TKey>,
+    ILeanEfUserEmailStore<TUser, TKey>,
+    ILeanEfUserPasswordStore<TUser>,
+    ILeanEfQueryableUserStore<TUser, TKey>
+    where TUser : class, ILeanEfIdentityUser<TKey>
+    where TContext : DbContext, IWithUsersDbContext<TUser, TKey>
+    where TKey : IEquatable<TKey>
+{
+    public LeanEfStandardUserStore(TContext context, IdentityErrorDescriber describer) : base(context, describer) { }
+}
+
+public class LeanEfStandardWithSecurityStampUserStore<TUser, TContext, TKey> : LeanEfUserStore<TUser, TContext, TKey>,
+    ILeanEfUserEmailStore<TUser, TKey>,
+    ILeanEfUserPasswordStore<TUser>,
+    ILeanEfQueryableUserStore<TUser, TKey>,
+    ILeanEfUserSecurityStampStore<TUser>
+    where TUser : class, ILeanEfIdentityUser<TKey>
+    where TContext : DbContext, IWithUsersDbContext<TUser, TKey>
+    where TKey : IEquatable<TKey>
+{
+    public LeanEfStandardWithSecurityStampUserStore(TContext context, IdentityErrorDescriber describer) : base(context, describer) { }
 }
 
 public class TrivialLookupNormalizer : ILookupNormalizer

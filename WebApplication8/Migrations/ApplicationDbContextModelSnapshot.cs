@@ -42,7 +42,7 @@ namespace WebApplication8.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("WebApplication8.Data.UserPrivateSection", b =>
@@ -63,7 +63,7 @@ namespace WebApplication8.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("UserPrivateSection");
+                    b.ToTable("UserPrivateSection", (string)null);
                 });
 
             modelBuilder.Entity("WebApplication8.Data.UserPrivateSection", b =>
