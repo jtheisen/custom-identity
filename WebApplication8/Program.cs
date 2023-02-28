@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using WebApplication8;
 using WebApplication8.Data;
@@ -16,7 +17,12 @@ services.AddDbContext<ApplicationDbContext>(options =>
 services.AddDatabaseDeveloperPageExceptionFilter();
 
 services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true);
-services.AddScoped<IUserStore<User>, CustomUserStore<User, ApplicationDbContext, Guid>>();
+
+services.AddScoped<ILookupNormalizer, TrivialLookupNormalizer>();
+
+
+
+services.AddScoped<IUserStore<User>, LeanEfUserStore<User, ApplicationDbContext, Guid>>();
 
 services.AddRazorPages();
 
