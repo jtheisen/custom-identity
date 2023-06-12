@@ -8,39 +8,6 @@ namespace WebApplication8.Data
 
     //public class DummyContext : IdentityDbContext { }
 
-    public interface ILeanEfIdentityUser
-    {
-        String Email { get; set; }
-
-        String NormalizedEmail { get; set; }
-
-        String UserName { get; set; }
-
-        String NormalizedUserName { get; set; }
-
-        Boolean IsEmailConfirmed { get; set; }
-
-        String PasswordHash { get; set; }
-
-        String SecurityStamp { get; set; }
-    }
-
-    public interface ILeanEfIdentityUser<TKey> : ILeanEfIdentityUser
-    {
-        TKey Id { get; set; }
-    }
-
-    public interface IWithUsersDbContext<TUser, TKey>
-    {
-        IQueryable<TUser> GetUsers();
-
-        IQueryable<TUser> GetUsersById(TKey id);
-
-        IQueryable<TUser> GetUsersByEmail(String normalizedEmail);
-
-        IQueryable<TUser> GetUsersByName(String normalizedName);
-    }
-
     public class User : ILeanEfIdentityUser<Guid>
     {
         public Guid Id { get; set; }
@@ -80,7 +47,7 @@ namespace WebApplication8.Data
         public String SecurityStamp { get; set; }
     }
 
-    public class ApplicationDbContext : DbContext, IWithUsersDbContext<User, Guid>
+    public class ApplicationDbContext : DbContext, ILeanEfIdentityDbContext<User, Guid>
     {
         public DbSet<User> Users { get; set; } = null!;
 

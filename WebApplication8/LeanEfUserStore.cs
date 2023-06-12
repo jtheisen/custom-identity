@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
-using WebApplication8.Data;
 
 namespace WebApplication8;
 
 public class LeanEfUserStore<TUser, TContext, TKey> : IUserStore<TUser>, ILeanEfUserStore<TUser, TKey>
     where TUser : class, ILeanEfIdentityUser<TKey>
-    where TContext : DbContext, IWithUsersDbContext<TUser, TKey>
+    where TContext : DbContext, ILeanEfIdentityDbContext<TUser, TKey>
     where TKey : IEquatable<TKey>
 {
     public LeanEfUserStore(TContext context, IdentityErrorDescriber describer)
@@ -239,7 +238,7 @@ public class LeanEfUserStore<TUser, TContext, TKey> : IUserStore<TUser>, ILeanEf
         _disposed = true;
     }
 
-    IWithUsersDbContext<TUser, TKey> ILeanEfUserStore<TUser, TKey>.Context => Context;
+    ILeanEfIdentityDbContext<TUser, TKey> ILeanEfUserStore<TUser, TKey>.Context => Context;
 }
 
 public interface ILeanEfUserSecurityStampStore<TUser> : IUserSecurityStampStore<TUser>
@@ -332,7 +331,7 @@ public interface ILeanEfQueryableUserStore<TUser, TKey> : IQueryableUserStore<TU
 
 public interface ILeanEfUserStore<TUser, TKey>
 {
-    IWithUsersDbContext<TUser, TKey> Context { get; }
+    ILeanEfIdentityDbContext<TUser, TKey> Context { get; }
 }
 
 public class LeanEfStandardUserStore<TUser, TContext, TKey> : LeanEfUserStore<TUser, TContext, TKey>,
@@ -340,7 +339,7 @@ public class LeanEfStandardUserStore<TUser, TContext, TKey> : LeanEfUserStore<TU
     ILeanEfUserPasswordStore<TUser>,
     ILeanEfQueryableUserStore<TUser, TKey>
     where TUser : class, ILeanEfIdentityUser<TKey>
-    where TContext : DbContext, IWithUsersDbContext<TUser, TKey>
+    where TContext : DbContext, ILeanEfIdentityDbContext<TUser, TKey>
     where TKey : IEquatable<TKey>
 {
     public LeanEfStandardUserStore(TContext context, IdentityErrorDescriber describer) : base(context, describer) { }
@@ -352,7 +351,7 @@ public class LeanEfStandardWithSecurityStampUserStore<TUser, TContext, TKey> : L
     ILeanEfQueryableUserStore<TUser, TKey>,
     ILeanEfUserSecurityStampStore<TUser>
     where TUser : class, ILeanEfIdentityUser<TKey>
-    where TContext : DbContext, IWithUsersDbContext<TUser, TKey>
+    where TContext : DbContext, ILeanEfIdentityDbContext<TUser, TKey>
     where TKey : IEquatable<TKey>
 {
     public LeanEfStandardWithSecurityStampUserStore(TContext context, IdentityErrorDescriber describer) : base(context, describer) { }
